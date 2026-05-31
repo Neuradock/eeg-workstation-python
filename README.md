@@ -1,333 +1,90 @@
-# NeuraDock EEG Workstation Python Tools
+# NeuraDock EEG Development Tutorials
 
-This repository contains Python tools, notebooks, and examples for working with EEG data from **NeuraDock EEG Workstation**.
+This repository provides Python tutorials for the NeuraDock dry-electrode EEG device, covering the full pipeline from raw data reading, real-time streaming, offline quality inspection, to signal analysis.
 
-NeuraDock EEG Workstation is a 7-channel dry-electrode EEG development kit for researchers, developers, and makers working with brain signals.
+---
 
-This repository focuses on Python-based workflows for:
+## Tutorial Index (7 Lessons)
 
-- Reading recorded EEG text files
-- Parsing USB and Bluetooth data formats
-- Accessing real-time EEG data streams
-- Inspecting and plotting EEG signals
-- Running basic preprocessing workflows
-- Preparing data for example workflows and agent-assisted analysis
+| No. | File | Description |
+| :-- | :--- | :---------- |
+| 1 | `1.text_file_read_bluetooth_version.ipynb` | **Bluetooth Offline Data Reading**: Parse the `.txt` log file saved by NeuraDock (Bluetooth mode) into a NumPy array `[channels, data_points]`, and visualize basic time-domain waveforms. |
+| 2 | `2.text_file_read_usb_version.ipynb` | **USB Offline Data Reading**: Similar to Tutorial 1, but adapted to the USB data format (1 sample packet per line instead of 5). |
+| 3 | `3.online_data_stream_bluetooth.ipynb` | **Bluetooth Online Data Stream**: Receive EEG data in real time via TCP, fetching and processing data segment by segment. |
+| 4 | `4.online_data_stream_usb.ipynb` | **USB Online Data Stream**: Receive EEG data in real time via TCP, suitable for high-sampling-rate scenarios. |
+| 5 | `5.offline_data_quality_check.ipynb` | **Offline Signal Quality Check**: Perform segment-wise Welch PSD analysis on existing data, evaluate signal quality from three perspectives—50Hz power-line noise, EMG artifacts, and outliers—and generate heatmaps. |
+| 6 | `6.offline_data_preprocess.ipynb` | **Offline Data Preprocessing**: Based on the quality-check results from Tutorial 5, automatically detect bad channels, reject noisy time segments, and provide before/after comparison visualizations. |
+| 7 | `7.signal_quality_check.ipynb` | **Comprehensive Signal Quality Assessment**: Demonstrate two classic EEG paradigms—eyes-open/closed Alpha Blocking and task-state ERD (Event-Related Desynchronization)—and plot topographic maps (Topomaps) using MNE. |
 
-## Repository Scope
+---
 
-This repository is intended for Python data handling and analysis utilities.
+## Core Dependencies
 
-It is used for:
-
-- EEG text file readers
-- USB real-time stream examples
-- Bluetooth real-time stream examples
-- Notebook-based tutorials
-- Basic preprocessing examples
-- Basic plotting and inspection examples
-- Helper functions for working with NeuraDock EEG data
-
-This repository is **not** used for:
-
-- NeuraDock Recording Software releases
-- Full application installers
-- Large public sample datasets
-- Full agent workflow logic
-- Full hardware design files
-
-Related repositories:
-
-| Repository | Purpose |
-|---|---|
-| [eeg-workstation](https://github.com/Neuradock/eeg-workstation) | Main project overview and repository navigation |
-| [eeg-workstation-docs](https://github.com/Neuradock/eeg-workstation-docs) | Documentation, setup guides, data format notes, tutorials, and hardware interface notes |
-| [eeg-workstation-software](https://github.com/Neuradock/eeg-workstation-software) | NeuraDock Recording Software releases and software usage notes |
-| [eeg-workstation-python](https://github.com/Neuradock/eeg-workstation-python) | Python tools, notebooks, and EEG data reading examples |
-| [eeg-workstation-agent](https://github.com/Neuradock/eeg-workstation-agent) | EEG Agent workflows, prompts, and analysis pipelines |
-| [eeg-workstation-examples](https://github.com/Neuradock/eeg-workstation-examples) | Example EEG demos and signal processing workflows |
-| [eeg-workstation-sample-data](https://github.com/Neuradock/eeg-workstation-sample-data) | Public sample EEG datasets for tutorials and examples |
-| [eeg-workstation-hardware](https://github.com/Neuradock/eeg-workstation-hardware) | Hardware interface and port specifications for third-party integration |
-
-## Data Sources
-
-NeuraDock EEG data can be accessed through several workflows.
-
-| Data Source | Description | Related Documentation |
-|---|---|---|
-| USB text files | EEG data exported from the USB recording workflow | [Read USB Text Files](https://github.com/Neuradock/eeg-workstation-docs/blob/main/tutorials/read-txt-usb.md) |
-| Bluetooth text files | EEG data exported from the Bluetooth recording workflow | [Read Bluetooth Text Files](https://github.com/Neuradock/eeg-workstation-docs/blob/main/tutorials/read-txt-bluetooth.md) |
-| USB real-time stream | Real-time EEG data accessed through the USB workflow | [USB Real-Time Data Streaming](https://github.com/Neuradock/eeg-workstation-docs/blob/main/tutorials/real-time-streaming-usb.md) |
-| Bluetooth real-time stream | Real-time EEG data accessed through the Bluetooth workflow | [Bluetooth Real-Time Data Streaming](https://github.com/Neuradock/eeg-workstation-docs/blob/main/tutorials/real-time-streaming-bluetooth.md) |
-| Public sample data | Example EEG datasets for testing and offline workflows | [eeg-workstation-sample-data](https://github.com/Neuradock/eeg-workstation-sample-data) |
-
-## Channel Layout
-
-The default 7-channel electrode layout is:
-
-```text
-O1, O2, Oz, PO3, PO4, CP5, CP6
+```
+numpy, pandas, matplotlib, scipy, seaborn, mne
 ```
 
-Python readers and examples should preserve this channel order unless otherwise stated.
+For the full dependency list, please see [`requirements.txt`](requirements.txt).
 
-The recommended parsed data structure is:
+---
 
-```text
-sample_index, timestamp, O1, O2, Oz, PO3, PO4, CP5, CP6, marker
-```
+## Environment Requirements
 
-If timestamp or marker information is not available in a specific workflow, those fields can be omitted or generated by the parser.
+- **Python Version**: **3.9 or 3.10** is recommended for the best compatibility.  
+  See [`PYTHON_VERSION.md`](PYTHON_VERSION.md) for details.
+- **Operating System**: Windows / macOS / Linux (online streaming tutorials require the device and PC to be on the same LAN).
 
-## Current and Planned Examples
+---
 
-This repository is being organized from existing NeuraDock Python tutorial materials.
+## Quick Start
 
-Planned and in-progress examples include:
+1. **Clone the repository**
+   ```bash
+   git clone <repo-url>
+   cd NeuraDock-Tutorials
+   ```
 
-| File | Purpose | Related Tutorial |
-|---|---|---|
-| `examples/text_file_read_usb_version.ipynb` | Read and parse USB-exported EEG text files | [Read USB Text Files](https://github.com/Neuradock/eeg-workstation-docs/blob/main/tutorials/read-txt-usb.md) |
-| `examples/text_file_read_bluetooth_version.ipynb` | Read and parse Bluetooth-exported EEG text files | [Read Bluetooth Text Files](https://github.com/Neuradock/eeg-workstation-docs/blob/main/tutorials/read-txt-bluetooth.md) |
-| `examples/online_data_stream_usb.ipynb` | Read real-time EEG data through the USB workflow | [USB Real-Time Data Streaming](https://github.com/Neuradock/eeg-workstation-docs/blob/main/tutorials/real-time-streaming-usb.md) |
-| `examples/online_data_stream_bluetooth.ipynb` | Read real-time EEG data through the Bluetooth workflow | [Bluetooth Real-Time Data Streaming](https://github.com/Neuradock/eeg-workstation-docs/blob/main/tutorials/real-time-streaming-bluetooth.md) |
-| `examples/offline_data_preprocess.ipynb` | Basic offline preprocessing workflow | [Data Format](https://github.com/Neuradock/eeg-workstation-docs/blob/main/data-format.md) |
-| `examples/offline_text2clean_data.ipynb` | Convert exported text data into a cleaner Python-readable structure | [Data Format](https://github.com/Neuradock/eeg-workstation-docs/blob/main/data-format.md) |
-| `examples/signal_quality_check.ipynb` | Inspect basic EEG signal quality | [Signal Quality Check](https://github.com/Neuradock/eeg-workstation-docs/blob/main/tutorials/signal-quality.md) |
+2. **Create a virtual environment**
+   ```bash
+   python3.10 -m venv venv
+   # Windows
+   venv\Scripts\activate
+   # macOS / Linux
+   source venv/bin/activate
+   ```
 
-The exact official notebook filenames and locations will be finalized as the cleaned examples are added to this repository.
+3. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-## Recommended Repository Structure
+4. **Run the tutorials**
+   ```bash
+   jupyter notebook
+   ```
+   Open the notebooks in order: `1` → `2` → `3` / `4` → `5` → `6` → `9`.
 
-The recommended structure is:
+---
 
-```text
-eeg-workstation-python/
-├── README.md
-├── requirements.txt
-├── examples/
-│   ├── text_file_read_usb_version.ipynb
-│   ├── text_file_read_bluetooth_version.ipynb
-│   ├── online_data_stream_usb.ipynb
-│   ├── online_data_stream_bluetooth.ipynb
-│   ├── offline_data_preprocess.ipynb
-│   ├── offline_text2clean_data.ipynb
-│   └── signal_quality_check.ipynb
-└── docs/
-    └── api-reference.md
-```
+## Supplementary Files
 
-If reusable Python utilities are later packaged as a module, the structure may be expanded to:
+- **`Neuradock_library.py`**: Core algorithm library that encapsulates Bluetooth/USB data parsing, quality checks, data cleaning, and Alpha analysis. Tutorials 5, 6, and 9 depend on this module.
+- **`7.neuradock_marker.py`**: Online experiment marker tool. Provides `DataStream` and `EEGThreadManager` classes for injecting event markers during real-time acquisition.
+- **`example_data_bluetooth.txt` / `example_data_usb.txt`**: Example data files for direct use in offline tutorials.
 
-```text
-eeg-workstation-python/
-├── neuradock/
-│   ├── __init__.py
-│   ├── file_reader.py
-│   ├── stream.py
-│   ├── preprocessing.py
-│   └── plotting.py
-```
+---
 
-This package structure should only be added once the reusable API is cleaned and confirmed.
+## Learning Path
 
-## Python Version
+1. **Offline Basics**: Start with Tutorial 1 or 2 to get familiar with the `.txt` file format and parsing logic.  
+2. **Online Streaming**: After understanding the offline data format, use Tutorial 3 or 4 to connect the device and experience real-time streaming.  
+3. **Quality Control**: Run Tutorials 5 and 6 to build an intuitive understanding of EEG noise (powerline, EMG, outliers) and learn the cleaning strategy.  
+4. **Comprehensive Assessment**: Tutorial 9 is application-oriented. Validate signal quality and device performance through classic paradigms and topographic mapping.
 
-Python 3.9 or later is currently recommended.
+---
 
-The officially supported Python version range will be finalized before public release.
+## Notes
 
-## Dependencies
-
-Dependencies are maintained in:
-
-```text
-requirements.txt
-```
-
-The dependency list should reflect the actual imports used by the notebooks and scripts in this repository.
-
-Common dependency categories may include:
-
-- Array processing
-- Table processing
-- Signal processing
-- Plotting
-- Notebook execution
-- Stream handling
-
-The dependency list should be verified by running the official notebooks and examples before public release.
-
-## Working with Sample Data
-
-Large or reusable public sample datasets should be maintained in:
-
-- [eeg-workstation-sample-data](https://github.com/Neuradock/eeg-workstation-sample-data)
-
-This repository may include very small test files only if needed for minimal examples.
-
-Recommended workflow:
-
-1. Clone this repository.
-2. Clone [eeg-workstation-sample-data](https://github.com/Neuradock/eeg-workstation-sample-data).
-3. Open the relevant notebook.
-4. Update the data path if needed.
-5. Run the notebook locally.
-
-## USB Text File Workflow
-
-The USB text file workflow is used to read EEG text files exported from the USB recording workflow.
-
-In the existing tutorial material, the USB text format is simpler than the Bluetooth text format:
-
-```text
-One USB row = one sampling moment
-```
-
-Related tutorial:
-
-- [Read USB Text Files](https://github.com/Neuradock/eeg-workstation-docs/blob/main/tutorials/read-txt-usb.md)
-
-Expected notebook:
-
-```text
-examples/text_file_read_usb_version.ipynb
-```
-
-## Bluetooth Text File Workflow
-
-The Bluetooth text file workflow is used to read EEG text files exported from the Bluetooth recording workflow.
-
-In the existing tutorial material, one Bluetooth row may contain multiple sampling moments:
-
-```text
-One Bluetooth row = 2 header fields + 5 x (7 EEG channels + 1 auxiliary value)
-```
-
-The parser should unpack the grouped data into one parsed row per sampling moment.
-
-Related tutorial:
-
-- [Read Bluetooth Text Files](https://github.com/Neuradock/eeg-workstation-docs/blob/main/tutorials/read-txt-bluetooth.md)
-
-Expected notebook:
-
-```text
-examples/text_file_read_bluetooth_version.ipynb
-```
-
-## USB Real-Time Streaming Workflow
-
-The USB real-time streaming workflow is used to read live EEG data through USB.
-
-In the existing tutorial material:
-
-```text
-One USB stream row = one data block
-```
-
-Related tutorial:
-
-- [USB Real-Time Data Streaming](https://github.com/Neuradock/eeg-workstation-docs/blob/main/tutorials/real-time-streaming-usb.md)
-
-Expected notebook:
-
-```text
-examples/online_data_stream_usb.ipynb
-```
-
-## Bluetooth Real-Time Streaming Workflow
-
-The Bluetooth real-time streaming workflow is used to read live EEG data through Bluetooth.
-
-The existing tutorial material highlights the importance of:
-
-- Buffering incomplete socket data
-- Handling packet splitting and concatenation
-- Parsing grouped Bluetooth rows
-- Using `data_group_len` to control batch size
-- Keeping the final parsed layout consistent with the 7-channel format
-
-Related tutorial:
-
-- [Bluetooth Real-Time Data Streaming](https://github.com/Neuradock/eeg-workstation-docs/blob/main/tutorials/real-time-streaming-bluetooth.md)
-
-Expected notebook:
-
-```text
-examples/online_data_stream_bluetooth.ipynb
-```
-
-## Signal Quality Workflow
-
-The signal quality workflow helps users inspect basic EEG data quality using recorded NeuraDock data.
-
-Related tutorial:
-
-- [Signal Quality Check](https://github.com/Neuradock/eeg-workstation-docs/blob/main/tutorials/signal-quality.md)
-
-Expected notebook:
-
-```text
-examples/signal_quality_check.ipynb
-```
-
-The official sample data for this workflow should be maintained in:
-
-- [eeg-workstation-sample-data](https://github.com/Neuradock/eeg-workstation-sample-data)
-
-## Notes for Developers
-
-When adding or modifying Python examples, please follow these guidelines:
-
-- Keep filenames clear and descriptive.
-- Use English comments and markdown explanations for public examples.
-- Preserve the default channel order.
-- Clearly state whether data is raw, converted, filtered, or preprocessed.
-- Use relative paths where possible.
-- Avoid hardcoding local machine paths.
-- Keep raw data separate from processed data.
-- Do not commit large sample datasets into this repository.
-- Link to [eeg-workstation-sample-data](https://github.com/Neuradock/eeg-workstation-sample-data) for reusable datasets.
-- Keep examples aligned with the documentation in [eeg-workstation-docs](https://github.com/Neuradock/eeg-workstation-docs).
-
-## To Be Confirmed Before Public Release
-
-The following items should be confirmed before this repository is made public:
-
-| Item | Status |
-|---|---|
-| Official notebook filenames | To be confirmed |
-| Cleaned notebook versions uploaded | To be confirmed |
-| `requirements.txt` verified | To be confirmed |
-| Supported Python version | To be confirmed |
-| Official sample data paths | To be confirmed |
-| Whether a reusable `neuradock/` package will be added | To be confirmed |
-| API reference page | To be confirmed |
-| License | To be confirmed |
-
-## Related Documentation
-
-| Document | Description |
-|---|---|
-| [Getting Started](https://github.com/Neuradock/eeg-workstation-docs/blob/main/getting-started.md) | First-time setup guide for NeuraDock EEG Workstation |
-| [Software Installation](https://github.com/Neuradock/eeg-workstation-docs/blob/main/software-installation.md) | Software environment setup and installation guide |
-| [Data Format](https://github.com/Neuradock/eeg-workstation-docs/blob/main/data-format.md) | EEG text file structure, channel layout, USB data format, and Bluetooth data format |
-| [Read USB Text Files](https://github.com/Neuradock/eeg-workstation-docs/blob/main/tutorials/read-txt-usb.md) | Read and parse EEG text files recorded from the USB workflow |
-| [Read Bluetooth Text Files](https://github.com/Neuradock/eeg-workstation-docs/blob/main/tutorials/read-txt-bluetooth.md) | Read and parse EEG text files recorded from the Bluetooth workflow |
-| [USB Real-Time Data Streaming](https://github.com/Neuradock/eeg-workstation-docs/blob/main/tutorials/real-time-streaming-usb.md) | Read real-time EEG data through the USB workflow |
-| [Bluetooth Real-Time Data Streaming](https://github.com/Neuradock/eeg-workstation-docs/blob/main/tutorials/real-time-streaming-bluetooth.md) | Read real-time EEG data through the Bluetooth workflow |
-| [Signal Quality Check](https://github.com/Neuradock/eeg-workstation-docs/blob/main/tutorials/signal-quality.md) | Evaluate basic EEG signal quality from recorded NeuraDock data |
-| [Troubleshooting](https://github.com/Neuradock/eeg-workstation-docs/blob/main/troubleshooting.md) | Common connection, data recording, and software issues |
-
-## Links
-
-- Website: [neuradock.com](https://neuradock.com)
-- Crowd Supply: [NeuraDock EEG Workstation](https://www.crowdsupply.com/neuradock/neuradock-eeg-workstation)
-- YouTube: [@NeuraDock](https://www.youtube.com/@NeuraDock)
-- Discord: NeuraDock Community
-
-## License
-
-The license for this repository will be provided before public release.
-
-Unless otherwise stated, software code, documentation, sample data, and hardware interface materials may use different licenses across the NeuraDock GitHub organization.
+- Tutorials 3 and 4 require the NeuraDock device to enable TCP data forwarding, and the PC must be on the same LAN as the device.
+- The topographic analysis in Tutorial 9 relies on standard 10-20 electrode positions. The current 7-channel data is approximately projected using the `GSN-HydroCel-128` montage.
+- All threshold parameters (e.g., `thresh = [10, 20, 2]`) are set based on NeuraDock hardware characteristics. Please adjust them according to your actual application scenario.
