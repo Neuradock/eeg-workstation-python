@@ -7,7 +7,7 @@ Python tutorials for the **NeuraDock** dry-electrode EEG device, covering offlin
 ## Repository Structure
 
 ```
-.
+examples
 ├── 1.text_file_read_bluetooth_version.ipynb   # Bluetooth offline data reading
 ├── 2.text_file_read_usb_version.ipynb         # USB offline data reading
 ├── 3.online_data_stream_bluetooth.ipynb       # Bluetooth real-time streaming
