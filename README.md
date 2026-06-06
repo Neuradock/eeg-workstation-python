@@ -53,7 +53,7 @@ pip install -r requirements.txt
 NeuraDock exports raw EEG data as comma-delimited `.txt` files:
 
 - **Sampling Rate**: 250 Hz
-- **Channels**: 7 (mapped to `PO4, O2, T6, Oz, T5, O1, PO3` in the 10–20 system)
+- **Channels**: 7 (mapped to O1, O2, Oz, PO3, PO4, CP5, CP6 in the 10–20 system)
 - **Bluetooth format**: 5 sample packets per line (7 channel values + 1 separator per packet)
 - **USB format**: 1 sample packet per line (2 header fields + 7 channel values + 1 separator)
 
